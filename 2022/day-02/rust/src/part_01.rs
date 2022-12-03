@@ -1,5 +1,5 @@
 #[derive(Debug, Clone, Copy)]
-enum Move {
+pub(crate) enum Move {
     Rock,
     Paper,
     Scissors,
@@ -17,13 +17,13 @@ impl From<&str> for Move {
 }
 
 #[derive(Debug, Clone, Copy)]
-enum Outcome {
+pub(crate) enum Outcome {
     Win,
     Loss,
     Draw,
 }
 
-fn get_outcome_for_round(p1: &Move, p2: &Move) -> Outcome {
+pub(crate) fn get_outcome_for_round(p1: &Move, p2: &Move) -> Outcome {
     match (p1, p2) {
         (Move::Rock, Move::Scissors) => Outcome::Win,
         (Move::Rock, Move::Paper) => Outcome::Loss,
@@ -35,7 +35,7 @@ fn get_outcome_for_round(p1: &Move, p2: &Move) -> Outcome {
     }
 }
 
-fn score_for_round(outcome: &Outcome, mov: &Move) -> usize {
+pub(crate) fn get_score_for_round(outcome: &Outcome, mov: &Move) -> usize {
     let score_for_mov = match mov {
         Move::Rock => 1,
         Move::Paper => 2,
@@ -60,7 +60,7 @@ pub fn solve_part_01<'a>(input: &'a str) -> String {
 
     let line_socres = moves
         .iter()
-        .map(|(p1, p2)| score_for_round(&get_outcome_for_round(p1, p2), &p1))
+        .map(|(p1, p2)| get_score_for_round(&get_outcome_for_round(p1, p2), &p1))
         .collect::<Vec<_>>();
 
     let total_score = line_socres.iter().sum::<usize>();
@@ -73,7 +73,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_part_01() {
+    fn it_works() {
         let input = "A Y
 B X
 C Z";
