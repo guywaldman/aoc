@@ -13,6 +13,7 @@ pub fn solve_part_01<'a>(input: &'a str) -> String {
 }
 
 mod tests {
+    #[allow(unused_imports)]
     use super::*;
 
     #[test]
