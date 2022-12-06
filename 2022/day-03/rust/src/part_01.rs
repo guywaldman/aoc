@@ -1,15 +1,22 @@
+use once_cell::sync::Lazy;
+use std::collections::HashMap;
+
 type Priority = u8;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct Item(char);
 
+static PRIORITY_MAP: Lazy<HashMap<char, usize>> = Lazy::new(|| {
+    ('a'..='z')
+        .chain('A'..='Z')
+        .enumerate()
+        .map(|(i, chr)| (chr, i + 1))
+        .collect()
+});
+
 impl Item {
     fn priority(&self) -> Priority {
-        match self.0 {
-            'a'..='z' => self.0 as Priority - b'a' + 1,
-            'A'..='Z' => self.0 as Priority - b'A' + 27,
-            _ => 0,
-        }
+        PRIORITY_MAP[&self.0] as Priority
     }
 }
 
