@@ -1,10 +1,10 @@
 use once_cell::sync::Lazy;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
-type Priority = u8;
+type Priority = usize;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
-struct Item(char);
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub(crate) struct Item(pub(crate) char);
 
 static PRIORITY_MAP: Lazy<HashMap<char, usize>> = Lazy::new(|| {
     ('a'..='z')
@@ -15,25 +15,25 @@ static PRIORITY_MAP: Lazy<HashMap<char, usize>> = Lazy::new(|| {
 });
 
 impl Item {
-    fn priority(&self) -> Priority {
+    pub(crate) fn priority(&self) -> Priority {
         PRIORITY_MAP[&self.0] as Priority
     }
 }
 
-struct Rucksack {
-    compartment_1: Vec<Item>,
-    compartment_2: Vec<Item>,
+pub(crate) struct Rucksack {
+    compartment_1: HashSet<Item>,
+    compartment_2: HashSet<Item>,
 }
 
 impl Rucksack {
-    fn new(contents: &str) -> Self {
+    pub(crate) fn new(contents: &str) -> Self {
         let rucksack_items: Vec<Item> = contents.chars().map(|x| Item(x)).collect();
         let mut compartments = rucksack_items.chunks(rucksack_items.len() / 2);
-        let compartment_1 = compartments.nth(0).unwrap();
-        let compartment_2 = compartments.nth(0).unwrap();
+        let compartment_1 = compartments.nth(0).unwrap().into_iter().cloned().collect();
+        let compartment_2 = compartments.nth(0).unwrap().into_iter().cloned().collect();
         Rucksack {
-            compartment_1: compartment_1.to_vec(),
-            compartment_2: compartment_2.to_vec(),
+            compartment_1,
+            compartment_2,
         }
     }
 
@@ -93,11 +93,11 @@ CrZsJsPPZsGzwwsLwLmpwMDw";
         let rucksack = Rucksack::new(input);
         assert_eq!(
             rucksack.compartment_1,
-            vec![Item('a'), Item('b'), Item('c')]
+            vec![Item('a'), Item('b'), Item('c')].into_iter().collect()
         );
         assert_eq!(
             rucksack.compartment_2,
-            vec![Item('X'), Item('Y'), Item('Z')]
+            vec![Item('X'), Item('Y'), Item('Z')].into_iter().collect()
         );
     }
 }
